@@ -15,7 +15,7 @@ cars.get('/', async (req, res) => {
 
 cars.get('/:id', async (req, res) => {
   const car = await getCar(req.params.id);
-  if(car){
+  if(car.id){
     res.status(200).json(car);
   } else {
     res.status(404).json({error: 'Car not found'});
