@@ -6,8 +6,8 @@ INSERT INTO cars (year, make, model, trim, color, price, img_url, discontinued, 
 ('2010', 'Honda', 'CRV', 'EXL', 'Blue',20000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUMqo_yNDMHfhwy8nkmKro2roXFcimrtMBIg&s', true, '2024-07-17 14:25:33.789', '2024-07-17 14:25:33.789'),
 ('2024', 'Lamborghini', 'Huracan', null, 'Yellow',250000, 'https://cdn.motor1.com/images/mgl/y2pn8Y/s3/lamborghini-huracan-hybrid-il-render-di-motor1.com.jpg', false, '2024-07-17 14:25:33.789', '2024-07-17 14:25:33.789');
 
-INSERT INTO users (username, email,password) VALUES
-('admin', 'mquispe@pursuit.org', 'Pursuit@2024');
+INSERT INTO users (username, email, first_name, last_name, birth_date, password) VALUES
+('admin', 'mquispe@pursuit.org', 'Marco', 'Quispe', '2006-06-06', 'Pursuit@2024');
 
 INSERT INTO favorites (user_id, car_id) VALUES
 (1, 1),
