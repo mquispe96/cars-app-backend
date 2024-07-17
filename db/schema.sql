@@ -1,4 +1,4 @@
-DROP DATABASE IF EXIST cars_dev;
+DROP DATABASE IF EXISTS cars_dev;
 
 CREATE DATABASE cars_dev;
 
@@ -8,14 +8,33 @@ CREATE TABLE cars (
     id SERIAL PRIMARY KEY,
     year TEXT NOT NULL,
     make TEXT NOT NULL,
+    trim TEXT,
     model TEXT NOT NULL,
     color TEXT, 
     price INTEGER,
     img_url TEXT,
     discontinued BOOLEAN DEFAULT FALSE,
-    create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Drop the insert trigger function if it exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'set_timestamp_on_insert') THEN
+        DROP FUNCTION set_timestamp_on_insert();
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Drop the update trigger function if it exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'set_timestamp_on_update') THEN
+        DROP FUNCTION set_timestamp_on_update();
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Create the trigger function for inserts
 CREATE OR REPLACE FUNCTION set_timestamp_on_insert()
@@ -33,6 +52,24 @@ RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at := CURRENT_TIMESTAMP;
     RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Drop the insert trigger if it exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'before_insert_cars') THEN
+        DROP TRIGGER before_insert_cars ON cars;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Drop the update trigger if it exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'before_update_cars') THEN
+        DROP TRIGGER before_update_cars ON cars;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
