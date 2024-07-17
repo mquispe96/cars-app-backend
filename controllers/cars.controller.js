@@ -2,6 +2,7 @@ const express = require('express');
 const cars = express.Router();
 const {getAllCars, getCar, createCar, updateCar, deleteCar} = require('../queries/cars.queries.js');
 const {formatBody} = '../formatting/cars.formatting.js';
+const {hasAllRequiredFields, validateFieldsDataTypes} = require('../validations/cars.validations.js');
 
 cars.get('/', async (req, res) => {
   const allCars = await getAllCars();
@@ -21,7 +22,7 @@ cars.get('/:id', async (req, res) => {
   }
 });
 
-cars.post('/', async (req, res) => {
+cars.post('/',hasAllRequiredFields, validateFieldsDataTypes, async (req, res) => {
   const formattedBody = formatBody(req.body);
   const car = await createCar(formattedBody);
   if(car.error){
@@ -31,7 +32,7 @@ cars.post('/', async (req, res) => {
   }
 });
 
-cars.put('/:id', async (req, res) => {
+cars.put('/:id', hasAllRequiredFields, validateFieldsDataTypes, async (req, res) => {
   const formattedBody = formatBody(req.body);
   const car = await updateCar(req.params.id, formattedBody);
   if(car.error){
