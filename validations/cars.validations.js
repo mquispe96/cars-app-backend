@@ -1,4 +1,4 @@
-export const hasAllRequiredFields = (req, res, next) => {
+const hasAllRequiredFields = (req, res, next) => {
   const requiredFields = ['make', 'model', 'year']; 
   if(!requiredFields.every(field => req.body[field])){
     const missingFields = requiredFields.filter(field => !req.body[field]);
@@ -7,7 +7,7 @@ export const hasAllRequiredFields = (req, res, next) => {
   return next();
 };
 
-export const validateFieldsDataTypes = (req, res, next) => {
+const validateFieldsDataTypes = (req, res, next) => {
   const {year, price} = req.body;
   if(Number(year) === NaN){
     return res.status(400).json({error: 'Year must be a number'});
@@ -17,3 +17,5 @@ export const validateFieldsDataTypes = (req, res, next) => {
   }
   return next();
 };
+
+module.exports = {hasAllRequiredFields, validateFieldsDataTypes};
