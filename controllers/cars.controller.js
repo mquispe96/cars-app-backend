@@ -1,6 +1,7 @@
 const express = require('express');
 const cars = express.Router();
 const {getAllCars, getCar, createCar, updateCar, deleteCar} = require('../queries/cars.queries.js');
+const {formatBody} = '../formatting/cars.formatting.js';
 
 cars.get('/', async (req, res) => {
   const allCars = await getAllCars();
@@ -21,7 +22,8 @@ cars.get('/:id', async (req, res) => {
 });
 
 cars.post('/', async (req, res) => {
-  const car = await createCar(req.body);
+  const formattedBody = formatBody(req.body);
+  const car = await createCar(formattedBody);
   if(car.error){
     res.status(400).json(car.error);
   } else {
@@ -30,7 +32,8 @@ cars.post('/', async (req, res) => {
 });
 
 cars.put('/:id', async (req, res) => {
-  const car = await updateCar(req.params.id, req.body);
+  const formattedBody = formatBody(req.body);
+  const car = await updateCar(req.params.id, formattedBody);
   if(car.error){
     res.status(400).json(car.error);
   } else {
