@@ -1,4 +1,4 @@
-export const formatBody = body => {
+const formatBody = body => {
   const formattedBody = {...body};
   formattedBody.make = formattedBody.make
     .split(' ')
@@ -18,3 +18,5 @@ export const formatBody = body => {
     .join(' ');
   return formattedBody;
 };
+
+module.exports = {formatBody};

@@ -1,7 +1,7 @@
 const express = require('express');
 const cars = express.Router();
-const {getAllCars, getCar, createCar, updateCar, deleteCar} = require('../queries/cars.queries.js');
-const {formatBody} = '../formatting/cars.formatting.js';
+const {getAllCars, getCar, createCar, updateCar, deleteCar} = require('../queries/cars.query.js');
+const {formatBody} = require('../formatting/cars.formatting.js');
 const {hasAllRequiredFields, validateFieldsDataTypes} = require('../validations/cars.validations.js');
 
 cars.get('/', async (req, res) => {
@@ -28,7 +28,7 @@ cars.post('/',hasAllRequiredFields, validateFieldsDataTypes, async (req, res) =>
   if(!car.id){
     res.status(400).json(car.error);
   } else {
-    res.status(201).json(car.id);
+    res.status(201).json(car);
   }
 });
 
