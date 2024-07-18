@@ -62,25 +62,27 @@ users.delete('/delete', usernameExists, async (req, res) => {
 
 users.get('/favorites/:id', async (req, res) => {
   const {id} = req.params;
-  const user = humps.camelizeKeys(await getFavorites(id));
-  res.status(200).json(user);
+  const favorites = humps.camelizeKeys(await getFavorites(id));
+  res.status(200).json(favorites);
 });
 
 users.post('/add-favorite', async (req, res) => {
   const sqlObj = humps.decamelizeKeys(req.body);
   const favorite = humps.camelizeKeys(await addFavorite(sqlObj));
   if(favorite.id) {
-    res.status(201).json({success: 'Favorite added'});
+    const favorites = humps.camelizeKeys(await getFavorites(sqlObj.user_id));
+    res.status(201).json(favorites);
   } else {
     res.status(500).json({error: 'Internal server error'});
   }
 });
 
-users.delete('/remove-favorite', async (req, res) => {
-  const sqlObj = humps.decamelizeKeys(req.body);
-  const user = humps.camelizeKeys(await removeFavorite(sqlObj));
-  if(user.id) {
-    res.status(200).json({message: 'Favorite removed'});
+users.delete('/remove-favorite/:user/:car', async (req, res) => {
+  const {user, car} = req.params;
+  const favorite = humps.camelizeKeys(await removeFavorite({user_id: user, car_id: car}));
+  if(favorite.id) {
+    const favorites = humps.camelizeKeys(await getFavorites(user));
+    res.status(200).json(favorites);
   } else {
     res.status(500).json({error: 'Internal server error'});
   }
@@ -100,7 +102,8 @@ users.post('/add-comment', async (req, res) => {
   const sqlObj = humps.decamelizeKeys(req.body);
   const comment = humps.camelizeKeys(await addComment(sqlObj));
   if(comment.id) {
-    res.status(201).json({success: 'Comment added'});
+    const comments = humps.camelizeKeys(await getComments(sqlObj.car_id));
+    res.status(201).json(comments);
   } else {
     res.status(500).json({error: 'Internal server error'});
   }
@@ -110,17 +113,19 @@ users.put('/edit-comment', async (req, res) => {
   const sqlObj = humps.decamelizeKeys(req.body);
   const comment = humps.camelizeKeys(await editComment(sqlObj));
   if(comment.id) {
-    res.status(200).json({message: 'Comment updated'});
+    const comments = humps.camelizeKeys(await getComments(sqlObj.car_id));
+    res.status(200).json(comments);
   } else {
     res.status(500).json({error: 'Internal server error'});
   }
 });
 
-users.delete('/delete-comment', async (req, res) => {
-  const sqlObj = humps.decamelizeKeys(req.body);
-  const comment = humps.camelizeKeys(await deleteComment(sqlObj));
+users.delete('/delete-comment/:id/:car', async (req, res) => {
+  const {id, car} = req.params;
+  const comment = humps.camelizeKeys(await deleteComment(id));
   if(comment.id) {
-    res.status(200).json({message: 'Comment deleted'});
+    const comments = humps.camelizeKeys(await getComments(car));
+    res.status(200).json(comments);
   } else {
     res.status(500).json({error: 'Internal server error'});
   }

@@ -117,8 +117,8 @@ const addComment = async comment => {
 const editComment = async comment => {
   try {
     const updatedComment = await db.one(
-      'UPDATE comments SET comment=$3 WHERE user_id=$1 AND car_id=$2 RETURNING *',
-      [comment.user_id, comment.car_id, comment.comment],
+      'UPDATE comments SET comment=$3 WHERE user_id=$1 AND id=$2 RETURNING *',
+      [comment.user_id, comment.id, comment.comment],
     );
     return updatedComment;
   } catch (error) {
@@ -126,11 +126,11 @@ const editComment = async comment => {
   }
 };
 
-const deleteComment = async comment => {
+const deleteComment = async (id) => {
   try {
     const deletedComment = await db.one(
-      'DELETE FROM comments WHERE user_id=$1 AND car_id=$2 RETURNING *',
-      [comment.user_id, comment.car_id],
+      'DELETE FROM comments WHERE id=$1 RETURNING *',
+      [id],
     );
     return deletedComment;
   } catch (error) {
