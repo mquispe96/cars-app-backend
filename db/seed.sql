@@ -13,3 +13,8 @@ INSERT INTO favorites (user_id, car_id) VALUES
 (1, 1),
 (1, 2),
 (1, 3);
+
+INSERT INTO comments (user_id, car_id, comment) VALUES
+(1, 1, 'This is a nice car!'),
+(1, 2, 'This is a great car!'),
+(1, 3, 'This is a cool car!');
