@@ -28,7 +28,6 @@ users.get('/', (req, res) => res.status(403).json({error: 'Access denied'}));
 users.post('/login', usernameExists, async (req, res) => {
   const {username, password} = req.body;
   const user = humps.camelizeKeys(await getUsername(username, password));
-  console.log('user', user);
   res.status(200).json(user);
 });
 
