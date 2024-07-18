@@ -14,9 +14,12 @@ const {
   createUser,
   updateUser,
   deleteUser,
+  getFavorites,
+  addFavorite,
+  removeFavorite,
 } = require('../queries/users.query.js');
 
-users.get('*', (req, res) => res.status(403).json({error: 'Access denied'}));
+users.get('/', (req, res) => res.status(403).json({error: 'Access denied'}));
 
 users.post('/login', usernameExists, async (req, res) => {
   const {username, password} = req.body;
@@ -48,6 +51,32 @@ users.delete('/delete', usernameExists, async (req, res) => {
   const user = await deleteUser(username, password);
   if (user) {
     res.status(200).json({message: 'User deleted'});
+  } else {
+    res.status(500).json({error: 'Internal server error'});
+  }
+});
+
+users.get('/favorites/:id', async (req, res) => {
+  const {id} = req.params;
+  const user = humps.camelizeKeys(await getFavorites(id));
+  res.status(200).json(user);
+});
+
+users.post('/add-favorite', async (req, res) => {
+  const sqlObj = humps.decamelizeKeys(req.body);
+  const favorite = humps.camelizeKeys(await addFavorite(sqlObj));
+  if(favorite.id) {
+    res.status(201).json({success: 'Favorite added'});
+  } else {
+    res.status(500).json({error: 'Internal server error'});
+  }
+});
+
+users.delete('/remove-favorite', async (req, res) => {
+  const sqlObj = humps.decamelizeKeys(req.body);
+  const user = humps.camelizeKeys(await removeFavorite(sqlObj));
+  if(user.id) {
+    res.status(200).json({message: 'Favorite removed'});
   } else {
     res.status(500).json({error: 'Internal server error'});
   }
