@@ -11,9 +11,9 @@ const usernameExists = (req, res, next) => {
 
 const validateUsername = (req, res, next) => {
   const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const {username} = req.body;
-  if (!regex.test(username)) {
-    return res.status(400).json({error: 'Invalid username'});
+  const {email} = req.body;
+  if (!regex.test(email)) {
+    return res.status(400).json({error: 'Invalid email address format'});
   }
   return next();
 };
@@ -40,4 +40,5 @@ module.exports = {
   usernameExists,
   validateUsername,
   itsNewUsername,
+  hasAllFieldsRequired,
 };

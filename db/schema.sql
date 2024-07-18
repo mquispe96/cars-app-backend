@@ -32,8 +32,28 @@ CREATE TABLE users (
 CREATE TABLE favorites (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
-    car_id INTEGER REFERENCES cars(id),
+    car_id INTEGER REFERENCES cars(id)
 );
+
+DROP VIEW IF EXISTS user_favorite_cars;
+
+CREATE VIEW user_favorite_cars AS
+SELECT
+    users.id AS user_id,
+    users.username,
+    users.email,
+    users.first_name,
+    users.last_name,
+    users.birth_date,
+    array_agg(cars.id) AS favorite_car_ids
+FROM
+    users
+LEFT JOIN
+    favorites ON users.id = favorites.user_id
+LEFT JOIN
+    cars ON favorites.car_id = cars.id
+GROUP BY
+    users.id;
 
 -- Drop the update trigger function if it exists
 DO $$

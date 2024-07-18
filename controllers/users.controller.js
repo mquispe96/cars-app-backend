@@ -9,33 +9,44 @@ const {
 } = require('../validations/users.validations.js');
 const {formatData} = require('../formatting/users.formatting.js');
 
-const {getUsername, createUser, updateUser, deleteUser} = require('../queries/users.query.js');
+const {
+  getUsername,
+  createUser,
+  updateUser,
+  deleteUser,
+} = require('../queries/users.query.js');
 
 users.get('*', (req, res) => res.status(403).json({error: 'Access denied'}));
 
-users.post('/login', usernameExists, (req, res) => {
+users.post('/login', usernameExists, async (req, res) => {
   const {username, password} = req.body;
-  const user =  humps.camelizeKeys(getUsername(username, password));
+  const user = humps.camelizeKeys(await getUsername(username, password));
+  console.log('user', user);
   res.status(200).json(user);
 });
 
-users.post('/register', validateUsername, itsNewUsername, hasAllFieldsRequired, (req, res) =>{
-  const sqlObj = humps.decamelizeKeys(req.body);
-  const fomattedData = formatData(sqlObj);
-  const user = humps.camelizeKeys(createUser(fomattedData));
-  res.status(201).json(user);
+users.post(
+  '/register',
+  validateUsername,
+  itsNewUsername,
+  hasAllFieldsRequired,
+  async (req, res) => {
+    const sqlObj = humps.decamelizeKeys(req.body);
+    const fomattedData = formatData(sqlObj);
+    const user = humps.camelizeKeys(await createUser(fomattedData));
+    res.status(201).json(user);
 });
 
-users.put('/change-password', usernameExists,(req, res) => {
+users.put('/change-password', usernameExists, async (req, res) => {
   const sqlObj = humps.decamelizeKeys(req.body);
-  const user = humps.camelizeKeys(updateUser(sqlObj));
+  const user = humps.camelizeKeys(await updateUser(sqlObj));
   res.status(200).json(user);
 });
 
-users.delete('/delete', usernameExists, (req, res) => {
+users.delete('/delete', usernameExists, async (req, res) => {
   const {username, password} = req.body;
-  const user = deleteUser(username, password);
-  if(user){
+  const user = await deleteUser(username, password);
+  if (user) {
     res.status(200).json({message: 'User deleted'});
   } else {
     res.status(500).json({error: 'Internal server error'});
