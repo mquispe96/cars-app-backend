@@ -34,8 +34,8 @@ const createUser = async user => {
 const updateUser = async user => {
   try {
     const updatedUser = await db.one(
-      'UPDATE users SET password=$2 WHERE id=$1 RETURNING username, email, first_name, last_name, birth_date, created_at',
-      [user.id, user.password],
+      'UPDATE users SET password=$3 WHERE id=$1 AND username=$2 RETURNING username, email, first_name, last_name, birth_date, created_at',
+      [user.id, user.username,user.new_password],
     );
     return updatedUser;
   } catch (error) {
