@@ -61,7 +61,7 @@ const getFavorites = async id => {
       'SELECT array_agg(car_id) AS car_ids FROM favorites WHERE user_id=$1',
       [id],
     );
-    return favorites;
+    return favorites[0];
   } catch (error) {
     return error;
   }
@@ -91,4 +91,63 @@ const removeFavorite = async favorite => {
   }
 };
 
-module.exports = {getUsername, createUser, updateUser, deleteUser, addFavorite, removeFavorite, getFavorites};
+const getComments = async id => {
+  try {
+    const comments = await db.any('SELECT * FROM comments WHERE car_id=$1', [
+      id,
+    ]);
+    return comments;
+  } catch (error) {
+    return error;
+  }
+};
+
+const addComment = async comment => {
+  try {
+    const newComment = await db.one(
+      'INSERT INTO comments (user_id, car_id, comment) VALUES ($1, $2, $3) RETURNING *',
+      [comment.user_id, comment.car_id, comment.comment],
+    );
+    return newComment;
+  } catch (error) {
+    return error;
+  }
+};
+
+const editComment = async comment => {
+  try {
+    const updatedComment = await db.one(
+      'UPDATE comments SET comment=$3 WHERE user_id=$1 AND car_id=$2 RETURNING *',
+      [comment.user_id, comment.car_id, comment.comment],
+    );
+    return updatedComment;
+  } catch (error) {
+    return error;
+  }
+};
+
+const deleteComment = async comment => {
+  try {
+    const deletedComment = await db.one(
+      'DELETE FROM comments WHERE user_id=$1 AND car_id=$2 RETURNING *',
+      [comment.user_id, comment.car_id],
+    );
+    return deletedComment;
+  } catch (error) {
+    return error;
+  }
+};
+
+module.exports = {
+  getUsername,
+  createUser,
+  updateUser,
+  deleteUser,
+  addFavorite,
+  removeFavorite,
+  getFavorites,
+  getComments,
+  addComment,
+  editComment,
+  deleteComment,
+};
