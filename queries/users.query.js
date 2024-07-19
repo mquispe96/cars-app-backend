@@ -3,7 +3,7 @@ const db = require('../db/dbConfig.js');
 const getUsername = async (username, password) => {
   try {
     const user = await db.one(
-      'SELECT username, email, first_name, last_name, birth_date, created_at FROM users WHERE username=$1 AND password=$2',
+      'SELECT username, email, first_name, last_name, birth_date, created_at, id FROM users WHERE username=$1 AND password=$2',
       [username, password],
     );
     return user;
@@ -15,7 +15,7 @@ const getUsername = async (username, password) => {
 const createUser = async user => {
   try {
     const newUser = await db.one(
-      'INSERT INTO users (username, password, email, first_name, last_name, birth_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, email, first_name, last_name, birth_date, created_at',
+      'INSERT INTO users (username, password, email, first_name, last_name, birth_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, email, first_name, last_name, birth_date, created_at, id',
       [
         user.username,
         user.password,
@@ -34,7 +34,7 @@ const createUser = async user => {
 const updateUser = async user => {
   try {
     const updatedUser = await db.one(
-      'UPDATE users SET password=$3 WHERE id=$1 AND username=$2 RETURNING username, email, first_name, last_name, birth_date, created_at',
+      'UPDATE users SET password=$3 WHERE id=$1 AND username=$2 RETURNING username, email, first_name, last_name, birth_date, created_at, id',
       [user.id, user.username,user.new_password],
     );
     return updatedUser;
