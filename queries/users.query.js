@@ -1,10 +1,10 @@
-const db = require('../db/dbConfig.js');
+const db = require("../db/dbConfig.js");
 
 const getUsername = async (username, password) => {
   try {
     const user = await db.one(
-      'SELECT username, email, first_name, last_name, birth_date, created_at, id FROM users WHERE username=$1 AND password=$2',
-      [username, password],
+      "SELECT username, email, first_name, last_name, birth_date, created_at, id FROM users WHERE username=$1 AND password=$2",
+      [username, password]
     );
     return user;
   } catch (error) {
@@ -12,10 +12,23 @@ const getUsername = async (username, password) => {
   }
 };
 
-const createUser = async user => {
+const checkUserNotExists = async (user) => {
+  const { username, email } = user;
+  try {
+    const user = await db.one(
+      "SELECT * FROM users WHERE email=$1 AND username=$2",
+      [email, username]
+    );
+    return user;
+  } catch (error) {
+    return error;
+  }
+};
+
+const createUser = async (user) => {
   try {
     const newUser = await db.one(
-      'INSERT INTO users (username, password, email, first_name, last_name, birth_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, email, first_name, last_name, birth_date, created_at, id',
+      "INSERT INTO users (username, password, email, first_name, last_name, birth_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, email, first_name, last_name, birth_date, created_at, id",
       [
         user.username,
         user.password,
@@ -23,7 +36,7 @@ const createUser = async user => {
         user.first_name,
         user.last_name,
         user.birth_date,
-      ],
+      ]
     );
     return newUser;
   } catch (error) {
@@ -31,11 +44,11 @@ const createUser = async user => {
   }
 };
 
-const updateUser = async user => {
+const updateUser = async (user) => {
   try {
     const updatedUser = await db.one(
-      'UPDATE users SET password=$3 WHERE id=$1 AND username=$2 RETURNING username, email, first_name, last_name, birth_date, created_at, id',
-      [user.id, user.username,user.new_password],
+      "UPDATE users SET password=$3 WHERE id=$1 AND username=$2 RETURNING username, email, first_name, last_name, birth_date, created_at, id",
+      [user.id, user.username, user.new_password]
     );
     return updatedUser;
   } catch (error) {
@@ -46,8 +59,8 @@ const updateUser = async user => {
 const deleteUser = async (username, password) => {
   try {
     const user = await db.one(
-      'DELETE FROM users WHERE username=$1 AND password=$2 RETURNING *',
-      [username, password],
+      "DELETE FROM users WHERE username=$1 AND password=$2 RETURNING *",
+      [username, password]
     );
     return user;
   } catch (error) {
@@ -55,11 +68,11 @@ const deleteUser = async (username, password) => {
   }
 };
 
-const getFavorites = async id => {
+const getFavorites = async (id) => {
   try {
     const favorites = await db.any(
-      'SELECT array_agg(car_id) AS car_ids FROM favorites WHERE user_id=$1',
-      [id],
+      "SELECT array_agg(car_id) AS car_ids FROM favorites WHERE user_id=$1",
+      [id]
     );
     return favorites[0];
   } catch (error) {
@@ -67,11 +80,11 @@ const getFavorites = async id => {
   }
 };
 
-const addFavorite = async favorite => {
+const addFavorite = async (favorite) => {
   try {
     const updateFavorite = await db.one(
-      'INSERT INTO favorites (user_id, car_id) VALUES ($1, $2) RETURNING *',
-      [favorite.user_id, favorite.car_id],
+      "INSERT INTO favorites (user_id, car_id) VALUES ($1, $2) RETURNING *",
+      [favorite.user_id, favorite.car_id]
     );
     return updateFavorite;
   } catch (error) {
@@ -79,11 +92,11 @@ const addFavorite = async favorite => {
   }
 };
 
-const removeFavorite = async favorite => {
+const removeFavorite = async (favorite) => {
   try {
     const updateFavorite = await db.one(
-      'DELETE FROM favorites WHERE user_id=$1 AND car_id=$2 RETURNING *',
-      [favorite.user_id, favorite.car_id],
+      "DELETE FROM favorites WHERE user_id=$1 AND car_id=$2 RETURNING *",
+      [favorite.user_id, favorite.car_id]
     );
     return updateFavorite;
   } catch (error) {
@@ -91,9 +104,9 @@ const removeFavorite = async favorite => {
   }
 };
 
-const getComments = async id => {
+const getComments = async (id) => {
   try {
-    const comments = await db.any('SELECT * FROM comments WHERE car_id=$1', [
+    const comments = await db.any("SELECT * FROM comments WHERE car_id=$1", [
       id,
     ]);
     return comments;
@@ -102,11 +115,11 @@ const getComments = async id => {
   }
 };
 
-const addComment = async comment => {
+const addComment = async (comment) => {
   try {
     const newComment = await db.one(
-      'INSERT INTO comments (user_id, car_id, comment) VALUES ($1, $2, $3) RETURNING *',
-      [comment.user_id, comment.car_id, comment.comment],
+      "INSERT INTO comments (user_id, car_id, comment) VALUES ($1, $2, $3) RETURNING *",
+      [comment.user_id, comment.car_id, comment.comment]
     );
     return newComment;
   } catch (error) {
@@ -114,11 +127,11 @@ const addComment = async comment => {
   }
 };
 
-const editComment = async comment => {
+const editComment = async (comment) => {
   try {
     const updatedComment = await db.one(
-      'UPDATE comments SET comment=$3 WHERE user_id=$1 AND id=$2 RETURNING *',
-      [comment.user_id, comment.id, comment.comment],
+      "UPDATE comments SET comment=$3 WHERE user_id=$1 AND id=$2 RETURNING *",
+      [comment.user_id, comment.id, comment.comment]
     );
     return updatedComment;
   } catch (error) {
@@ -129,8 +142,8 @@ const editComment = async comment => {
 const deleteComment = async (id) => {
   try {
     const deletedComment = await db.one(
-      'DELETE FROM comments WHERE id=$1 RETURNING *',
-      [id],
+      "DELETE FROM comments WHERE id=$1 RETURNING *",
+      [id]
     );
     return deletedComment;
   } catch (error) {
@@ -150,4 +163,5 @@ module.exports = {
   addComment,
   editComment,
   deleteComment,
+  checkUserNotExists,
 };

@@ -1,9 +1,9 @@
-const {getUsername} = require('../queries/users.query.js');
+const {getUsername, checkUserNotExists} = require('../queries/users.query.js');
 
 const usernameExists = async (req, res, next) => {
   const {username, password} = req.body;
   const user = await getUsername(username, password);
-  if (!user.username) {
+  if (!user.id) {
     return res.status(400).json({error: 'Invalid username or password'});
   }
   return next();
@@ -19,9 +19,8 @@ const validateUsername = (req, res, next) => {
 };
 
 const itsNewUsername = async (req, res, next) => {
-  const {username, password} = req.body;
-  const user = await getUsername(username, password);
-  if (user) {
+  const user = await checkUserNotExists(req.body);
+  if (user.id) {
     return res.status(400).json({error: 'Username already exists'});
   }
   return next();
