@@ -1,5 +1,5 @@
 const formatData = data => {
-  const formattedBody = {...body};
+  const formattedBody = {...data};
   formattedBody.first_name =
     formattedBody.first_name.charAt(0).toUpperCase() +
     formattedBody.first_name.slice(1).toLowerCase();
