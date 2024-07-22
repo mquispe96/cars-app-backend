@@ -67,10 +67,7 @@ async function updateCar(id, car) {
 
 async function deleteCar(id) {
   try {
-    const deletedCar = await db.one(
-      'DELETE FROM cars WHERE id=$1 RETURNING *',
-      id,
-    );
+    const deletedCar = await db.one('DELETE FROM cars WHERE id=$1 RETURNING *', id);
     return deletedCar;
   } catch (error) {
     return error;
