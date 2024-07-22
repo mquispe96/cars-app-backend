@@ -43,6 +43,45 @@ CREATE TABLE comments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Drop the existing constraint if it exists (favorites table)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'favorites_car_id_fkey') THEN
+        ALTER TABLE favorites DROP CONSTRAINT favorites_car_id_fkey;
+    END IF;
+    IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'favorites_user_id_fkey') THEN
+        ALTER TABLE favorites DROP CONSTRAINT favorites_user_id_fkey;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Add the new constraints with ON DELETE CASCADE (favorites table)
+ALTER TABLE favorites
+ADD CONSTRAINT favorites_car_id_fkey FOREIGN KEY (car_id)
+REFERENCES cars (id) ON DELETE CASCADE,
+ADD CONSTRAINT favorites_user_id_fkey FOREIGN KEY (user_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+-- Drop the existing constraint if it exists (comments table)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'comments_car_id_fkey') THEN
+        ALTER TABLE comments DROP CONSTRAINT comments_car_id_fkey;
+    END IF;
+    IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'comments_user_id_fkey') THEN
+        ALTER TABLE comments DROP CONSTRAINT comments_user_id_fkey;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Add the new constraints with ON DELETE CASCADE (comments table)
+ALTER TABLE comments
+ADD CONSTRAINT comments_car_id_fkey FOREIGN KEY (car_id)
+REFERENCES cars (id) ON DELETE CASCADE,
+ADD CONSTRAINT comments_user_id_fkey FOREIGN KEY (user_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+
 -- Drop the update trigger function if it exists
 DO $$
 BEGIN

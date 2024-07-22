@@ -106,9 +106,10 @@ const removeFavorite = async (favorite) => {
 
 const getComments = async (id) => {
   try {
-    const comments = await db.any("SELECT * FROM comments WHERE car_id=$1", [
-      id,
-    ]);
+    const comments = await db.any(
+      "SELECT comments.*, users.first_name, users.last_name FROM comments JOIN users ON comments.user_id = users.id WHERE comments.car_id=$1",
+      [id]
+    );
     return comments;
   } catch (error) {
     return error;

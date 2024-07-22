@@ -70,7 +70,7 @@ cars.put(
 
 cars.delete('/:id', async (req, res) => {
   const car = await deleteCar(req.params.id);
-  if (car) {
+  if (car.id) {
     res.status(200).json({success: 'Car deleted'});
   } else {
     res.status(404).json({error: 'Car not found'});
