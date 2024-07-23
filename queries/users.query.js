@@ -56,11 +56,11 @@ const updateUser = async (user) => {
   }
 };
 
-const deleteUser = async (username, password) => {
+const deleteUser = async (id) => {
   try {
     const user = await db.one(
-      "DELETE FROM users WHERE username=$1 AND password=$2 RETURNING *",
-      [username, password]
+      "DELETE FROM users WHERE id=$1 RETURNING *",
+      [id]
     );
     return user;
   } catch (error) {

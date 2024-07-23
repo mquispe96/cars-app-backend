@@ -49,10 +49,10 @@ users.put('/change-password', usernameExists, async (req, res) => {
   res.status(200).json(user);
 });
 
-users.delete('/delete', usernameExists, async (req, res) => {
-  const {username, password} = req.body;
-  const user = await deleteUser(username, password);
-  if (user) {
+users.delete('/delete/:id', async (req, res) => {
+  const {id} = req.params;
+  const user = await deleteUser(id);
+  if (user.id) {
     res.status(200).json({message: 'User deleted'});
   } else {
     res.status(500).json({error: 'Internal server error'});
